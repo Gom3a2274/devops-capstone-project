@@ -40,12 +40,12 @@ class TestAccountService(TestCase):
     @classmethod
     def tearDownClass(cls):
         """Runs once before test suite"""
+        pass
 
     def setUp(self):
         """Runs before each test"""
         db.session.query(Account).delete()  # clean up the last tests
         db.session.commit()
-
         self.client = app.test_client()
 
     def tearDown(self):
@@ -56,7 +56,6 @@ class TestAccountService(TestCase):
         """It should return a CORS header"""
         response = self.client.get('/', environ_overrides=HTTPS_ENVIRON)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # Check for the CORS header
         self.assertEqual(response.headers.get('Access-Control-Allow-Origin'), '*')
 
     ######################################################################
@@ -105,11 +104,9 @@ class TestAccountService(TestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        # Make sure location header is set
         location = response.headers.get("Location", None)
         self.assertIsNotNone(location)
 
-        # Check the data is correct
         new_account = response.get_json()
         self.assertEqual(new_account["name"], account.name)
         self.assertEqual(new_account["email"], account.email)
@@ -144,6 +141,7 @@ class TestAccountService(TestCase):
         }
         for key, value in headers.items():
             self.assertEqual(response.headers.get(key), value)
+
     def test_get_account(self):
         """It should Read a single Account"""
         account = self._create_accounts(1)[0]
